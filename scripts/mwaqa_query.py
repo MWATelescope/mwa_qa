@@ -14,16 +14,21 @@ from astropy.io import ascii as ap_ascii
 import mwaqa.util as u
 
 
-def query(args, columns=("obsid", "projectid", "lowest_channel", "eor_field", "iono_qa"), actual_obsids=None):
+def query(args,
+          columns=("obsid", "projectid", "lowest_channel", "eor_field", "iono_qa"),
+          limit=100,
+          actual_obsids=None):
     if args.obsid:
         results = u.select(constraints=("=", "obsid", args.obsid),
-                           column_list=columns)
+                           column_list=columns,
+                           limit=limit)
 
     if args.min and args.max:
         results = u.select(constraints=("and",
                                         (">=", "obsid", args.min),
                                         ("<=", "obsid", args.max)),
-                           column_list=columns)
+                           column_list=columns,
+                           limit=limit)
 
     # If actual_obsids is specified, then prune obsids that do not belong.
     if actual_obsids is not None:
@@ -35,14 +40,7 @@ def query(args, columns=("obsid", "projectid", "lowest_channel", "eor_field", "i
         for i in reversed(to_be_deleted):
             del results["rows"][i]
 
-    t = Table(np.array(results["rows"]), names=columns)
-    if args.csv:
-        ap_ascii.write(Table(np.array(results["rows"]), names=columns),
-                       args.output_filename,
-                       overwrite=True,
-                       delimiter=args.delimiter)
-    else:
-        t.pprint(max_lines=-1, max_width=-1)
+    return results
 
 
 if __name__ == '__main__':
@@ -55,6 +53,8 @@ if __name__ == '__main__':
                         help="Use this parameter to specify the latest obsid in a range.")
     parser.add_argument("--obsid_file", type=str,
                         help="Use this parameter to specify a file of obsids.")
+    parser.add_argument("-l", "--limit", type=int, default=100,
+                        help="The upper limit of results returned. Default: %(default)s")
     parser.add_argument("--csv", action="store_true",
                         help="Print results in a CSV format.")
     parser.add_argument("-f", "--output_filename", type=str, default=None,
@@ -116,6 +116,15 @@ if __name__ == '__main__':
         obsids = np.loadtxt(args.obsid_file, dtype=int)
         args.min = np.min(obsids).astype(str)
         args.max = np.max(obsids).astype(str)
-        query(args, columns=columns, actual_obsids=obsids)
+        results = query(args, columns=columns, limit=args.limit, actual_obsids=obsids)
     else:
-        query(args, columns=columns)
+        results = query(args, columns=columns, limit=args.limit)
+
+    t = Table(np.array(results["rows"]), names=columns)
+    if args.csv:
+        ap_ascii.write(t,
+                       args.output_filename,
+                       overwrite=True,
+                       delimiter=args.delimiter)
+    else:
+        t.pprint(max_lines=-1, max_width=-1)
