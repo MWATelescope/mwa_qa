@@ -61,6 +61,16 @@ if __name__ == '__main__':
                         help="If specified, write the query results as a CSV to the specified file. By default, results are printed to screen.")
     parser.add_argument("--delimiter", type=str, default=',',
                         help="Use this delimiter when printing CSV tables.")
+    parser.add_argument("--projectid", action="store_false",
+                        help="Print the projectid column. Default: %(default)s")
+    parser.add_argument("--lowest_channel", action="store_false",
+                        help="Print the lowest_channel column. Default: %(default)s")
+    parser.add_argument("-e", "--eor_field", action="store_false",
+                        help="Print the eor_field column. Default: %(default)s")
+    parser.add_argument("-g", "--gridpoint_number", action="store_false",
+                        help="Print the gridpoint_number column. Default: %(default)s")
+    parser.add_argument("-i", "--iono_qa", action="store_false",
+                        help="Print the iono_qa column. Default: %(default)s")
     parser.add_argument("-m", "--iono_mag", action="store_true",
                         help="Print the iono_mag column. Default: %(default)s")
     parser.add_argument("-p", "--iono_pca", action="store_true",
@@ -99,7 +109,7 @@ if __name__ == '__main__':
     if args.delimiter == "\\t":
         args.delimiter = "\t"
 
-    columns = ["obsid", "projectid", "lowest_channel", "eor_field", "iono_qa"]
+    columns = ["obsid", "projectid", "lowest_channel", "eor_field", "gridpoint_number", "iono_qa"]
     column_dict = {
         "iono_magnitude": args.iono_mag,
         "iono_pca": args.iono_pca,

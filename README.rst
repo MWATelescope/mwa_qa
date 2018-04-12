@@ -17,7 +17,7 @@ or obsids from a file::
 
   mwaqa_query.py --obsid_file /path/to/obsids.txt
 
-It is possible to add more columns to the query's results, such as ``iono_magnitude`` or ``sourcelist``. All supported additions are detailed in the help::
+It is possible to add columns to or remove columns from the query's results, such as ``iono_magnitude`` or ``sourcelist``. All supported modifications are detailed in the help::
 
   mwaqa_query -h
 
