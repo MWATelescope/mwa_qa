@@ -77,13 +77,13 @@ def load_config_options():
     """
     global KEYS
     global BASEURL
-    KEYS = {None:None}
+    KEYS = {None: None}
 
     logger.debug("loading config file.")
     CP = ConfigParser.SafeConfigParser(defaults={})
     CPfile = CP.read(CPPATH)
     if not CPfile:
-        logger.critical("None of the specified configuration files found by quality.py: %s" % (CPPATH,))
+        logger.critical("None of the specified configuration files found by %s: %s" % (__name__, CPPATH,))
         return
     for user_name, key in CP.items(section="KEYS"):
         KEYS[user_name] = key.strip()
