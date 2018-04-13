@@ -283,11 +283,6 @@ def select(constraints=None, column_list=None, limit=100, desc=False, user_name=
     :param secure_key: A password, which the server ignores for SELECT queries.
     :return: The result dictionary, described above.
     """
-    if KEYS is None:
-        load_config_options()
-
-    if secure_key is None:
-        secure_key = KEYS.get(user_name, "")
 
     params = {"constraints": json.dumps(constraints),
               "column_list": json.dumps(column_list),
