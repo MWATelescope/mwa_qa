@@ -77,6 +77,7 @@ def load_config_options():
     file with at least one username/password pair that matches a valid user/password on the server.
     """
     global KEYS
+    global BASEURL
     KEYS = {None:None}
 
     logger.debug("loading config file.")
@@ -87,6 +88,8 @@ def load_config_options():
         return
     for user_name, key in CP.items(section="KEYS"):
         KEYS[user_name] = key.strip()
+    for _, key in CP.items(section="BASEURL"):
+        BASEURL = key.strip()
     logger.debug("Config file loaded, %d keys" % (len(KEYS),))
 
 
