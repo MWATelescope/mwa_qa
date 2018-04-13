@@ -19,9 +19,9 @@ except ImportError:
 
 
 # configure the logging
-logging.basicConfig(filename='/tmp/quality.log', format='# %(levelname)s:%(name)s: %(message)s')
-logger = logging.getLogger('quality')
-logger.setLevel(logging.DEBUG)
+logging.basicConfig(format="# %(levelname)s:%(name)s: %(message)s")
+logger = logging.getLogger("quality")
+logger.setLevel(logging.INFO)
 
 # This server only has read-only access to the table, only select queries will work.
 BASEURL = "http://mwa-metadata01.pawsey.org.au/"
@@ -33,7 +33,7 @@ CPPATH = ["/usr/local/etc/quality.conf", "./quality.conf"]
 KEYS = None
 
 
-def getmeta(servicetype='metadata', service='obs', params=None):
+def getmeta(servicetype="metadata", service="obs", params=None):
     """
     Given a JSON web servicetype ('observation', 'metadata', 'quality', etc), a service name (eg 'obs', find, or 'con')
     and a set of parameters as a Python dictionary, return the result of calling that service.
@@ -47,7 +47,7 @@ def getmeta(servicetype='metadata', service='obs', params=None):
     :return: A Python object converted from a JSON string, or the raw string if it's not in JSON format.
     """
     if params:
-        data = urlencode(params)  # Turn the dictionary into a string with encoded 'name=value' pairs
+        data = urlencode(params)  # Turn the dictionary into a string with encoded "name=value" pairs
     else:
         data = ""
 
@@ -79,15 +79,15 @@ def load_config_options():
     global KEYS
     KEYS = {None:None}
 
-    logger.info('loading config file.')
+    logger.debug("loading config file.")
     CP = ConfigParser.SafeConfigParser(defaults={})
     CPfile = CP.read(CPPATH)
     if not CPfile:
         logger.critical("None of the specified configuration files found by quality.py: %s" % (CPPATH,))
         return
-    for user_name, key in CP.items(section='KEYS'):
+    for user_name, key in CP.items(section="KEYS"):
         KEYS[user_name] = key.strip()
-    logger.info('Config file loaded, %d keys' % (len(KEYS),))
+    logger.debug("Config file loaded, %d keys" % (len(KEYS),))
 
 
 def insert(row=None, user_name=DEFAULTID, secure_key=None):
@@ -112,9 +112,9 @@ def insert(row=None, user_name=DEFAULTID, secure_key=None):
         load_config_options()
 
     if secure_key is None:
-        secure_key = KEYS.get(user_name, '')
+        secure_key = KEYS.get(user_name, "")
 
-    if 'mro' not in BASEURL:
+    if "mro" not in BASEURL:
         logger.critical("INSERT calls won't work unless BASEURL is set to the MRO server")
         return
 
@@ -122,9 +122,9 @@ def insert(row=None, user_name=DEFAULTID, secure_key=None):
         logger.critical("INSERT calls won't work without a valid user_name and secure_key, check the config file.")
         return
 
-    result = getmeta(servicetype='quality', service='insert', params={'row':json.dumps(row),
-                                                                      'user_name':user_name,
-                                                                      'secure_key':secure_key})
+    result = getmeta(servicetype="quality", service="insert", params={"row": json.dumps(row),
+                                                                      "user_name": user_name,
+                                                                      "secure_key": secure_key})
     return result
 
 
@@ -173,20 +173,16 @@ def update(constraints=None, data=None, user_name=DEFAULTID, secure_key=None):
         load_config_options()
 
     if secure_key is None:
-        secure_key = KEYS.get(user_name, '')
+        secure_key = KEYS.get(user_name, "")
 
-    if 'mro' not in BASEURL:
+    if "mro" not in BASEURL or not secure_key:
         logger.critical("UPDATE calls won't work without a valid user_name and secure_key, check the config file.")
         return
 
-    if not secure_key:
-        logger.critical("UPDATE calls won't work without a valid user_name and secure_key, check the config file.")
-        return
-
-    result = getmeta(servicetype='quality', service='update', params={'constraints':json.dumps(constraints),
-                                                                      'data':json.dumps(data),
-                                                                      'user_name':user_name,
-                                                                      'secure_key':secure_key})
+    result = getmeta(servicetype="quality", service="update", params={"constraints": json.dumps(constraints),
+                                                                      "data": json.dumps(data),
+                                                                      "user_name": user_name,
+                                                                      "secure_key": secure_key})
     return result
 
 
@@ -232,15 +228,15 @@ def delete(constraints=None, user_name=DEFAULTID, secure_key=None):
         load_config_options()
 
     if secure_key is None:
-        secure_key = KEYS.get(user_name, '')
+        secure_key = KEYS.get(user_name, "")
 
-    if 'mro' not in BASEURL or not secure_key:
+    if "mro" not in BASEURL or not secure_key:
         logger.critical("DELETE calls won't work without a valid user_name and secure_key, check the config file.")
         return
 
-    result = getmeta(servicetype='quality', service='delete', params={'constraints':json.dumps(constraints),
-                                                                      'user_name':user_name,
-                                                                      'secure_key':secure_key})
+    result = getmeta(servicetype="quality", service="delete", params={"constraints": json.dumps(constraints),
+                                                                      "user_name": user_name,
+                                                                      "secure_key": secure_key})
     return result
 
 
@@ -289,16 +285,16 @@ def select(constraints=None, column_list=None, limit=100, desc=False, user_name=
         load_config_options()
 
     if secure_key is None:
-        secure_key = KEYS.get(user_name, '')
+        secure_key = KEYS.get(user_name, "")
 
-    params = {'constraints': json.dumps(constraints),
-              'column_list': json.dumps(column_list),
-              'limit': limit,
-              'user_name': user_name,
-              'secure_key': secure_key}
+    params = {"constraints": json.dumps(constraints),
+              "column_list": json.dumps(column_list),
+              "limit": limit,
+              "user_name": user_name,
+              "secure_key": secure_key}
 
     if desc:
-        params['desc'] = 1   # Sort in descending order
+        params["desc"] = 1   # Sort in descending order
 
-    result = getmeta(servicetype='quality', service='select', params=params)
+    result = getmeta(servicetype="quality", service="select", params=params)
     return result
