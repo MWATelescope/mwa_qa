@@ -21,7 +21,6 @@ except ImportError:
 # configure the logging
 logging.basicConfig(format="# %(levelname)s:%(name)s: %(message)s")
 logger = logging.getLogger("quality")
-logger.setLevel(logging.INFO)
 
 # This server only has read-only access to the table, only select queries will work.
 BASEURL = "http://mwa-metadata01.pawsey.org.au/"
