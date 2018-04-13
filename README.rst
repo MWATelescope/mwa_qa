@@ -78,6 +78,11 @@ Dependencies
 
 Installation
 ------------
-- Clone this repository
-- Add the path to this repository to your PYTHONPATH
-- Add this repository's ``scripts`` path to your PATH
+1. Clone this repository
+2. Run ``pip install .`` inside the repo.
+
+or
+
+1. Clone this repository
+2. Add the path to this repository to your PYTHONPATH
+3. Add this repository's ``scripts`` path to your PATH
