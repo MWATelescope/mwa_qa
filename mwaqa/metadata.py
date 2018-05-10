@@ -65,9 +65,7 @@ class Query(object):
             u += "&extended"
         self.url = u
 
-    def results(self, csv=False, output_filename=None):
-        self.csv = csv
-
+    def make_query(self):
         if not hasattr(self, "url"):
             self.params2url()
 
@@ -105,12 +103,9 @@ class Query(object):
                   file=sys.stderr)
 
         self.table = Table(np.array(results), names=columns)
-        if self.csv:
-            if output_filename is None:
-                raise ValueError("No output filename specified!")
-            ap_ascii.write(self.table,
-                           output_filename,
-                           overwrite=True,
-                           delimiter=',')
-        else:
-            self.table.pprint(max_lines=-1, max_width=-1)
+
+    def write_csv(self, output_filename):
+        ap_ascii.write(self.table,
+                       output_filename,
+                       overwrite=True,
+                       delimiter=',')

@@ -7,6 +7,8 @@ from future.builtins import range, str
 import sys
 import argparse
 
+from astropy.io import ascii as ap_ascii
+
 from mwaqa.metadata import Query
 
 
@@ -54,7 +56,7 @@ if __name__ == "__main__":
                         help="Minimum number of files. e.g. 25")
     parser.add_argument("--csv", action="store_true",
                         help="Return results in a CSV format.")
-    parser.add_argument("--output_filename", type=str, default=sys.stdout,
+    parser.add_argument("--output_filename", type=str,
                         help="The filename where CSV results are to be written. Default: %(default)s")
     parser.add_argument("--brief", action="store_true",
                         help="Return only a few columns (disables the \"extended\" feature).")
@@ -65,11 +67,26 @@ if __name__ == "__main__":
 
     # Create a query object.
     q = Query(extended_results=not args.brief)
+
     # Populate the parameters of the query with whatever's been specified via argparse.
     for arg in vars(args):
         if arg in unrelated:
             continue
         elif getattr(args, arg) is not None:
             q.params[arg] = getattr(args, arg)
-    # Handle the results; this prints the table to stdout, or writes the contents to a specified filename.
-    q.results(csv=args.csv, output_filename=args.output_filename)
+
+    # Make the query.
+    q.make_query()
+
+    # If the output_filename has been specified, then we don't need to print the
+    # query results, only write them to a file.
+    if args.output_filename:
+        q.write_csv(output_filename=args.output_filename)
+    # Otherwise, handle the printing.
+    else:
+        if args.csv:
+            ap_ascii.write(q.table,
+                           sys.stdout,
+                           delimiter=',')
+        else:
+            q.table.pprint(max_lines=-1, max_width=-1)
