@@ -126,7 +126,7 @@ if __name__ == '__main__':
         obsids = np.loadtxt(args.obsid_file, dtype=int)
         args.min = np.min(obsids).astype(str)
         args.max = np.max(obsids).astype(str)
-        results = query(args, columns=columns, limit=args.limit, actual_obsids=obsids)
+        results = query(args, columns=columns, limit=100000000, actual_obsids=obsids)
     else:
         results = query(args, columns=columns, limit=args.limit)
 
