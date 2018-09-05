@@ -36,19 +36,32 @@ import mwaqa.util as u
 
 def query(args,
           columns=("obsid", "projectid", "lowest_channel", "eor_field", "iono_qa"),
-          limit=100,
-          actual_obsids=None):
-    if args.obsid:
-        results = u.select(constraints=("=", "obsid", args.obsid),
-                           column_list=columns,
-                           limit=limit)
+          limit=10,
+          actual_obsids=None,
+          warn=True):
 
-    if args.min and args.max:
-        results = u.select(constraints=("and",
-                                        (">=", "obsid", args.min),
-                                        ("<=", "obsid", args.max)),
-                           column_list=columns,
-                           limit=limit)
+    if not args.obsid and not args.min:
+        print("Expected --min, but it was not specified!",
+              file=sys.stderr)
+        exit(1)
+
+    if args.obsid:
+        constraints = ("=", "obsid", args.obsid)
+    elif args.max:
+        constraints = ("and",
+                       (">=", "obsid", args.min),
+                       ("<=", "obsid", args.max))
+    else:
+        constraints = (">=", "obsid", args.min)
+
+    results = u.select(constraints=constraints,
+                       column_list=columns,
+                       limit=limit)
+
+    # Warn if we've hit the pagesize limit of results.
+    if warn and len(results["rows"]) >= limit:
+        print("Query results may be truncated due to the pagesize parameter.",
+              file=sys.stderr)
 
     # If actual_obsids is specified, then prune obsids that do not belong.
     if actual_obsids is not None:
@@ -73,11 +86,11 @@ if __name__ == '__main__':
                         help="Use this parameter to specify the latest obsid in a range.")
     parser.add_argument("--obsid_file", type=str,
                         help="Use this parameter to specify a file of obsids.")
-    parser.add_argument("-l", "--limit", type=int, default=100,
+    parser.add_argument("-l", "--limit", type=int, default=10,
                         help="The upper limit of results returned. Default: %(default)s")
     parser.add_argument("--csv", action="store_true",
                         help="Print results in a CSV format.")
-    parser.add_argument("-f", "--output_filename", type=str, default=None,
+    parser.add_argument("-f", "--output_filename", type=str,
                         help="If specified, write the query results as a CSV to the specified file. By default, results are printed to screen.")
     parser.add_argument("--delimiter", type=str, default=',',
                         help="Use this delimiter when printing CSV tables.")
@@ -104,19 +117,16 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Checking that arguments are sensible.
-    if args.obsid or args.obsid_file:
-        if args.min or args.max:
-            print("Cannot combine --min or --max with --obsid or --obsid_file",
-                  file=sys.stderr)
-            exit(1)
-
-    if args.obsid and args.obsid_file:
-        print("Cannot combine --obsid with --obsid_file",
+    if (args.obsid or args.obsid_file) and (args.min or args.max):
+        print("Cannot combine (--min or --max) with (--obsid_file) or (--obsid)",
               file=sys.stderr)
         exit(1)
-
-    if (args.min and not args.max) or (args.max and not args.min):
-        print("Both the minimum and maximum of a range search are required.",
+    elif not args.obsid and not args.obsid_file and not args.min:
+        print("The minimum time must be specified.",
+              file=sys.stderr)
+        exit(1)
+    elif args.obsid and args.obsid_file:
+        print("Cannot combine --obsid with --obsid_file",
               file=sys.stderr)
         exit(1)
 
