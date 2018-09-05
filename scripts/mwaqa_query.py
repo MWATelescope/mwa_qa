@@ -79,6 +79,8 @@ if __name__ == '__main__':
                         help="Print the sourcelist column. Default: %(default)s")
     parser.add_argument("-u", "--uvfits_path", action="store_true",
                         help="Print the uvfits_path column. Default: %(default)s")
+    parser.add_argument("-v", "--verbose", action="store_true",
+                        help="Print all optional columns. Default: %(default)s")
     args = parser.parse_args()
 
     # Checking that arguments are sensible.
@@ -117,7 +119,9 @@ if __name__ == '__main__':
         "uvfits_path": args.uvfits_path,
     }
     for k, v in column_dict.items():
-        if v:
+        if args.verbose:
+            columns.append(k)
+        elif v:
             columns.append(k)
 
     # If we've been passed a file, just query all obsids between the
