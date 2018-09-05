@@ -1,5 +1,25 @@
 #!/usr/bin/env python
 
+# Columns in the QA database:
+# obsid
+# projectid
+# lowest_channel
+# gridpoint_number
+# duration_seconds
+# eor_field
+# calibration_qa
+# rts_cal_qa
+# noise_qa
+# iono_magnitude
+# iono_pca
+# iono_qa
+# window_power
+# iono_abs_tec
+# uvfits_path
+# rts_cal_source
+# rts_peel_source
+# sourcelist
+
 # Python 2 and 3 compatibility
 from __future__ import print_function, division
 from future.builtins import range, str
