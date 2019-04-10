@@ -7,6 +7,7 @@ from future.builtins import range, str
 import sys
 import argparse
 
+import numpy as np
 from astropy.io import ascii as ap_ascii
 
 from mwaqa.metadata import Query
@@ -16,6 +17,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--pagesize", type=int, default=10,
                         help="The limit on the number of results to return from the query. Default: %(default)s")
+    parser.add_argument("--obsid_file", type=str,
+                        help="Use this parameter to specify a file of obsids.")
     parser.add_argument("--projectid", type=str,
                         help="Project ID. e.g. G0009")
     parser.add_argument("--obsname", type=str,
@@ -75,8 +78,22 @@ if __name__ == "__main__":
         elif getattr(args, arg) is not None:
             q.params[arg] = getattr(args, arg)
 
+    # If we've been passed a file, just query all obsids between the
+    # minimum and maximum inside the file, then prune the ones not in the file.
+    if args.obsid_file:
+        obsids = np.loadtxt(args.obsid_file, dtype=int)
+        q.params["mintime"] = np.min(obsids).astype(str)
+        q.params["maxtime"] = np.max(obsids).astype(str)
+
     # Make the query.
     q.make_query()
+
+    if args.obsid_file:
+        to_be_deleted = []
+        for i, o in enumerate(q.table["Obsid"]):
+            if o not in obsids:
+                to_be_deleted.append(i)
+        q.table.remove_rows(to_be_deleted)
 
     # If the output_filename has been specified, then we don't need to print the
     # query results, only write them to a file.
