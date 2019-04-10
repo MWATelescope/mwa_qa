@@ -66,7 +66,7 @@ class Query(object):
             u += "&extended"
         self.url = u
 
-    def make_query(self):
+    def make_query(self, warn=True):
         if not hasattr(self, "url"):
             self.params2url()
 
@@ -99,7 +99,7 @@ class Query(object):
                        "Declination [deg]")
 
         # Warn if we've hit the pagesize limit of results.
-        if len(results) >= self.params["pagesize"]:
+        if warn and len(results) >= self.params["pagesize"]:
             print("Query results may be truncated due to the pagesize parameter.",
                   file=sys.stderr)
 
