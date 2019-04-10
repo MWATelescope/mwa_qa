@@ -19,12 +19,12 @@ if __name__ == "__main__":
     parser.add_argument("--projectid", type=str,
                         help="Project ID. e.g. G0009")
     parser.add_argument("--obsname", type=str,
-                        help="Observation name. e.g. high_season%")
+                        help="Observation name. e.g. high_season%%")
     parser.add_argument("--creator", type=str,
                         help="Name of the creator. e.g. DJacobs")
-    parser.add_argument("--mintime", type=int, default=1065880000,
+    parser.add_argument("--mintime", type=int,
                         help="Minimum start time. e.g. 1065880000")
-    parser.add_argument("--maxtime", type=int, default=1065881000,
+    parser.add_argument("--maxtime", type=int,
                         help="Maximum start time. e.g. 1065881000")
     parser.add_argument("--mintime_utc", type=str,
                         help="Minimum UTC time.")
