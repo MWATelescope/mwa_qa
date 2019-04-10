@@ -89,7 +89,8 @@ class Query(object):
                        "Elevation [deg]",
                        "Pointing RA [deg]",
                        "Pointing Dec [deg]",
-                       "LST [deg]")
+                       "LST [deg]",
+                       "Gridpoint")
         else:
             columns = ("Obsid",
                        "Obs Name",
