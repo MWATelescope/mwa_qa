@@ -43,7 +43,7 @@ More flexibility is provided by the ``mwaqa.utils`` library file. For example, t
                                          ("=", "gridpoint_number", -1)),
                                         ("like", "uvfits_path", "%")), # This rule means "non blank"
                            column_list=columns,
-                           limit=1000000)
+                           pagesize=1000000)
 
   # Convert Andrew's output to an astropy table.
   t = Table(np.array(qa_db_results["rows"]), names=columns)

@@ -36,7 +36,7 @@ import mwaqa.util as u
 
 def query(args,
           columns=("obsid", "projectid", "lowest_channel", "eor_field", "iono_qa"),
-          limit=10,
+          pagesize=10,
           actual_obsids=None,
           warn=True):
 
@@ -56,10 +56,10 @@ def query(args,
 
     results = u.select(constraints=constraints,
                        column_list=columns,
-                       limit=limit)
+                       pagesize=pagesize)
 
     # Warn if we've hit the pagesize limit of results.
-    if warn and len(results["rows"]) >= limit:
+    if warn and len(results["rows"]) >= pagesize:
         print("Query results may be truncated due to the pagesize parameter.",
               file=sys.stderr)
 
@@ -78,6 +78,8 @@ def query(args,
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument("--pagesize", type=int, default=10,
+                        help="The limit on the number of results to return from the query. Default: %(default)s")
     parser.add_argument("-o", "--obsid", type=int,
                         help="Extract the row for a single observation.")
     parser.add_argument("--min", type=int,
@@ -86,8 +88,6 @@ if __name__ == '__main__':
                         help="Use this parameter to specify the latest obsid in a range.")
     parser.add_argument("--obsid_file", type=str,
                         help="Use this parameter to specify a file of obsids.")
-    parser.add_argument("-l", "--limit", type=int, default=10,
-                        help="The upper limit of results returned. Default: %(default)s")
     parser.add_argument("--csv", action="store_true",
                         help="Print results in a CSV format.")
     parser.add_argument("-f", "--output_filename", type=str,
@@ -160,9 +160,9 @@ if __name__ == '__main__':
         obsids = np.loadtxt(args.obsid_file, dtype=int)
         args.min = np.min(obsids).astype(str)
         args.max = np.max(obsids).astype(str)
-        results = query(args, columns=columns, limit=100000000, actual_obsids=obsids)
+        results = query(args, columns=columns, pagesize=100000000, actual_obsids=obsids)
     else:
-        results = query(args, columns=columns, limit=args.limit)
+        results = query(args, columns=columns, pagesize=args.pagesize)
 
     t = Table(np.array(results["rows"]), names=columns)
     if args.csv:

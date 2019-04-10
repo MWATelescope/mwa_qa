@@ -14,8 +14,8 @@ from mwaqa.metadata import Query
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--pagesize", type=int, default=100,
-                        help="Specify limit of results to return from the query. Default: %(default)s")
+    parser.add_argument("--pagesize", type=int, default=10,
+                        help="The limit on the number of results to return from the query. Default: %(default)s")
     parser.add_argument("--projectid", type=str,
                         help="Project ID. e.g. G0009")
     parser.add_argument("--obsname", type=str,

@@ -54,9 +54,10 @@ def complete_parameters():
 
 
 class Query(object):
-    def __init__(self, extended_results=True):
+    def __init__(self, extended_results=True, pagesize=10):
         self.extended = extended_results
         self.params = complete_parameters()
+        self.params["pagesize"] = pagesize
 
     def params2url(self):
         u = "{0}&{1}".format("http://mro.mwa128t.org/metadata/find/?search=search",

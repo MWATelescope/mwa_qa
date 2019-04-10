@@ -242,7 +242,7 @@ def delete(constraints=None, user_name=DEFAULTID, secure_key=None):
     return result
 
 
-def select(constraints=None, column_list=None, limit=100, desc=False, user_name=DEFAULTID, secure_key=None):
+def select(constraints=None, column_list=None, pagesize=100, desc=False, user_name=DEFAULTID, secure_key=None):
     """
     Call the select() web service to query the database and return a list of rows satisfying the constraints.
 
@@ -277,7 +277,7 @@ def select(constraints=None, column_list=None, limit=100, desc=False, user_name=
 
     :param constraints: A nested list of constraints, in the format described above.
     :param column_list: A list of column names to return in the SELECT query.
-    :param limit: The maximum number of rows to return.
+    :param pagesize: The maximum number of rows to return.
     :param desc: Boolean - if False, sort the rows by obsid, if True, sort the rows in reverse order of obsid.
     :param user_name: A project ID code (or a pseudo-ID), which the server ignores for SELECT queries.
     :param secure_key: A password, which the server ignores for SELECT queries.
@@ -286,7 +286,7 @@ def select(constraints=None, column_list=None, limit=100, desc=False, user_name=
 
     params = {"constraints": json.dumps(constraints),
               "column_list": json.dumps(column_list),
-              "limit": limit,
+              "limit": pagesize,
               "user_name": user_name,
               "secure_key": secure_key}
 
