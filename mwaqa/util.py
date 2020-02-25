@@ -23,7 +23,7 @@ logging.basicConfig(format="# %(levelname)s:%(name)s: %(message)s")
 logger = logging.getLogger("quality")
 
 # This server only has read-only access to the table, only select queries will work.
-BASEURL = "http://mwa-metadata01.pawsey.org.au/"
+BASEURL = "http://ws.mwatelescope.org/"
 # Default user_name to use for queries, if user_name is not supplied.
 DEFAULTID = "quality"
 # Paths to search for the config file containing user names and passwords.
